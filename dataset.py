@@ -4,7 +4,6 @@ import torch
 import random
 import numpy as np
 
-
 class TBTTScriptsDataset(Dataset):
     def __init__(self, data, labels):
         self.data = data
