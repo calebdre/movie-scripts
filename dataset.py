@@ -32,7 +32,7 @@ class TBTTScriptsDataset(Dataset):
         
         batches = []
         for key in combinations.keys():
-            comb = combinations[key]
+            comb = np.array(combinations[key])
             comb_len = len(comb)
             
             if comb_len >= batch_size:
