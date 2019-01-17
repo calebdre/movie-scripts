@@ -56,7 +56,7 @@ def most_common_k(data, k = 6000, skip_top_n = 10):
     all_tokens = reduce_to_tokens(data)
     counts = Counter(all_tokens)
     most_common = counts.most_common(k + skip_top_n)
-    allowed_words = [w_c[0] for w_c in most_common[skip_top_n:]]
+    allowed_words = set([w_c[0] for w_c in most_common[skip_top_n:]])
     
     def remove(x):
         return [token if token in allowed_words else unk_token for token in x]

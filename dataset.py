@@ -23,7 +23,7 @@ class TBTTScriptsDataset(Dataset):
         combinations = {}
         for i, (script, score) in enumerate(zip(self.data, self.labels)):
             key = len(script)
-            val = (torch.tensor(script, dtype = torch.long), score)
+            val = (script, score)
             
             if key in combinations.keys():
                 combinations[key].append(val)
@@ -32,7 +32,7 @@ class TBTTScriptsDataset(Dataset):
         
         batches = []
         for key in combinations.keys():
-            comb = np.array(combinations[key])
+            comb = combinations[key]
             comb_len = len(comb)
             
             if comb_len >= batch_size:
@@ -49,11 +49,11 @@ class TBTTScriptsDataset(Dataset):
         return batches
     
     def decouple_batch(self, batch):
-        scripts = [datum[0] for datum in batch]
+        scripts = [torch.tensor(datum[0], dtype = torch.long) for datum in batch]
         labels = [datum[1] for datum in batch]
         
         return torch.stack(scripts) , torch.tensor(labels, dtype=torch.float)
-    
+
 class ScriptsDataset(Dataset):
     def __init__(self, data, labels):
         self.data = data
@@ -83,9 +83,9 @@ class ScriptsDataset(Dataset):
             length_list.append(len(datum[0]))
             data_list.append(torch.tensor(datum[0]))
             
-        data_list = pad_sequence(data_list, batch_first = True)
+        data_list = pad_sequence(data_list, batch_first = True).long()
         sorted_length_list, sorted_idxs = torch.sort(torch.tensor(length_list), descending = True)
         data_list = data_list[sorted_idxs]
-        label_list = torch.tensor(label_list)[sorted_idxs]
+        label_list = torch.tensor(label_list, dtype = torch.float)[sorted_idxs]
         
         return data_list, sorted_length_list, label_list
