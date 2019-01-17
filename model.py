@@ -48,6 +48,7 @@ class PackedNetwork(nn.Module):
         else:
             raise Exception("'{}' is an invalid network type".format(rnn_type))
         self.linear = nn.Linear(hidden_size, 1)
+        self.dropout = nn.Dropout(.4)
 
     def forward(self, x, hidden):
         batch_size, seq_len = x.size()
@@ -58,6 +59,8 @@ class PackedNetwork(nn.Module):
 #             embed = torch.nn.utils.rnn.pack_padded_sequence(embed, lengths.numpy(), batch_first=True)
         
         net_out, hidden = self.net(embed, hidden)
+        net_out = self.dropout(net_out)
+        
 #         if has_padding:
 #             net_out, _ = torch.nn.utils.rnn.pad_packed_sequence(rnn_out, batch_first=True)
         
