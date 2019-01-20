@@ -59,7 +59,7 @@ class PackedNetwork(nn.Module):
         net_out, hidden = self.net(embed, hidden)
         
         if lengths is not None:
-            net_out, _ = torch.nn.utils.rnn.pad_packed_sequence(rnn_out, batch_first=True)
+            net_out, _ = torch.nn.utils.rnn.pad_packed_sequence(net_out, batch_first=True)
         
         net_out = self.dropout(net_out)
         # sum hidden activations of RNN across time
