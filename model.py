@@ -50,20 +50,18 @@ class PackedNetwork(nn.Module):
         self.linear = nn.Linear(hidden_size, 1)
         self.dropout = nn.Dropout(.4)
 
-    def forward(self, x, hidden):
+    def forward(self, x, hidden, lengths = None):
         batch_size, seq_len = x.size()
         embed = self.embedding(x)
-#         has_padding = x[:, -1].shape[0] != x.shape[0]
-#         if has_padding:
-#             set_trace()
-#             embed = torch.nn.utils.rnn.pack_padded_sequence(embed, lengths.numpy(), batch_first=True)
+        if lengths is not None:
+            embed = torch.nn.utils.rnn.pack_padded_sequence(embed, lengths.numpy(), batch_first=True)
         
         net_out, hidden = self.net(embed, hidden)
+        
+        if lengths is not None:
+            net_out, _ = torch.nn.utils.rnn.pad_packed_sequence(rnn_out, batch_first=True)
+        
         net_out = self.dropout(net_out)
-        
-#         if has_padding:
-#             net_out, _ = torch.nn.utils.rnn.pad_packed_sequence(rnn_out, batch_first=True)
-        
         # sum hidden activations of RNN across time
         net_out = net_out.view(batch_size, seq_len, 2, self.hidden_size)
         net_out = torch.sum(net_out, dim = 2)
