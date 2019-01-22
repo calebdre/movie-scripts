@@ -20,7 +20,7 @@ class PackedNetwork(nn.Module):
         self.dropout = nn.Dropout(.4)
 
     def forward(self, x, hidden, lengths = None):
-        batch_size, seq_len = x.size()
+        batch_size, seq_len = x.shape
         embed = self.embedding(x)
         if lengths is not None:
             embed = torch.nn.utils.rnn.pack_padded_sequence(embed, lengths.numpy(), batch_first=True)
